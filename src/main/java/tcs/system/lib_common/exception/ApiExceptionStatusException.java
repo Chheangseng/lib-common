@@ -5,33 +5,17 @@ import lombok.Getter;
 @Getter
 public class ApiExceptionStatusException extends RuntimeException {
   private final int statusCode;
+  private final Object error;
 
-  public ApiExceptionStatusException(int statusCode) {
-    this.statusCode = statusCode;
-  }
 
   public ApiExceptionStatusException(String message, int statusCode) {
     super(message);
     this.statusCode = statusCode;
+    this.error = null;
   }
-
-  public ApiExceptionStatusException(String message, Throwable cause, int statusCode) {
-    super(message, cause);
+  public ApiExceptionStatusException(String message,int statusCode, Object error){
+    super(message);
     this.statusCode = statusCode;
-  }
-
-  public ApiExceptionStatusException(Throwable cause, int statusCode) {
-    super(cause);
-    this.statusCode = statusCode;
-  }
-
-  public ApiExceptionStatusException(
-      String message,
-      Throwable cause,
-      boolean enableSuppression,
-      boolean writableStackTrace,
-      int statusCode) {
-    super(message, cause, enableSuppression, writableStackTrace);
-    this.statusCode = statusCode;
+    this.error = error;
   }
 }

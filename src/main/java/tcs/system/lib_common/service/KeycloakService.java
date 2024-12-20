@@ -73,8 +73,8 @@ public class KeycloakService {
     if (Objects.isNull(dtoCreateAccount)) {
       throw new ApiExceptionStatusException("Object is null", 400);
     }
-    var account = getUserRepresentation(dtoCreateAccount);
     try {
+      var account = getUserRepresentation(dtoCreateAccount);
       this.resource.users().create(account);
     } catch (Exception e) {
       throw new ApiExceptionStatusException("unable to create user", 400);
@@ -148,10 +148,8 @@ public class KeycloakService {
                     role -> {
                       try {
                         return rolesResource().get(role).toRepresentation();
-                      } catch (NotFoundException exception) {
-                        var roleRepresent = new RoleRepresentation();
-                        roleRepresent.setName(role);
-                        rolesResource().create(roleRepresent);
+                      } catch (Exception exception) {
+                        this.createRole(role);
                       }
                       return rolesResource().get(role).toRepresentation();
                     })
@@ -184,11 +182,18 @@ public class KeycloakService {
 
   private void createRoleIfNotExist(String role) {
     try {
-      var response = this.rolesResource().get(role).toRepresentation();
-    } catch (NotFoundException exception) {
+      this.rolesResource().get(role).toRepresentation();
+    } catch (Exception exception) {
+      this.createRole(role);
+    }
+  }
+  private void createRole (String role){
+    try{
       var roleRepresent = new RoleRepresentation();
       roleRepresent.setName(role);
       this.rolesResource().create(roleRepresent);
+    }catch (Exception e){
+      throw new ApiExceptionStatusException("Identify service error",400);
     }
   }
 

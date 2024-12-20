@@ -12,5 +12,6 @@ public class ApiException {
   private final String massage;
   private final int statusCode;
   private final HttpStatus status;
+  private final Object subErrors;
   private final ZonedDateTime zonedDateTime;
 }
