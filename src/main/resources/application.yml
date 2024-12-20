@@ -1,4 +1,3 @@
-
 keycloak-properties:
   realm: ${KEYCLOAK_REALM}
   client-id: ${CLIENT_ID}
