@@ -1,4 +1,4 @@
-- Application config
+- Application class config
   + @Import({KeycloakConfig.class, KeycloakService.class, ApiExceptionHandler.class})
   + @EnableConfigurationProperties({KeycloakProperties.class, FileSystemProperties.class})
 
