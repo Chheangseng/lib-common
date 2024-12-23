@@ -1,10 +1,17 @@
-package tcs.system.lib_common.service;
+package tcs.system.lib_common.keycloak.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.NotFoundException;
 
+import java.io.ByteArrayInputStream;
 import java.util.*;
 
+import jakarta.ws.rs.client.ClientResponseContext;
+import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.client.jaxrs.internal.FinalizedClientResponse;
 import org.keycloak.OAuth2Constants;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
@@ -23,6 +30,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import tcs.system.lib_common.dto.DtoCreateAccount;
+import tcs.system.lib_common.dto.DtoUserLogin;
 import tcs.system.lib_common.exception.ApiExceptionStatusException;
 import tcs.system.lib_common.keycloak.KeycloakProperties;
 
@@ -71,13 +79,26 @@ public class KeycloakService {
 
   public void createUser(DtoCreateAccount dtoCreateAccount) {
     if (Objects.isNull(dtoCreateAccount)) {
-      throw new ApiExceptionStatusException("Object is null", 400);
-    }
-    try {
-      var account = getUserRepresentation(dtoCreateAccount);
-      this.resource.users().create(account);
-    } catch (Exception e) {
       throw new ApiExceptionStatusException("unable to create user", 400);
+    }
+    Response response;
+    var account = getUserRepresentation(dtoCreateAccount);
+    response = this.resource.users().create(account);
+    if (response.getStatus() > 299) {
+      throw new ApiExceptionStatusException("Keycloak error", 500);
+    }
+    var userId = CreatedResponseUtil.getCreatedId(response);
+    if (!userId.isEmpty()) {
+      assignRealmRoleToUser(userId, dtoCreateAccount.getRole());
+    }
+  }
+  public void updateUser (String keyCloakUserId,DtoCreateAccount dtoCreateAccount){
+    if (Objects.isNull(keyCloakUserId) || !keyCloakUserId.isEmpty()){
+      throw new ApiExceptionStatusException("User Id is required",400);
+    }
+    this.userResource(keyCloakUserId).update(getUserRepresentation(dtoCreateAccount));
+    if (Objects.nonNull(dtoCreateAccount.getRole()) && !dtoCreateAccount.getRole().isEmpty()) {
+      assignRealmRoleToUser(keyCloakUserId, dtoCreateAccount.getRole());
     }
   }
 
@@ -139,6 +160,9 @@ public class KeycloakService {
   }
 
   public void assignRealmRoleToUser(String userId, List<String> roles) {
+    if (Objects.isNull(roles) || roles.isEmpty()){
+      return;
+    }
     this.userResource(userId)
         .roles()
         .realmLevel()
@@ -187,13 +211,14 @@ public class KeycloakService {
       this.createRole(role);
     }
   }
-  private void createRole (String role){
-    try{
+
+  private void createRole(String role) {
+    try {
       var roleRepresent = new RoleRepresentation();
       roleRepresent.setName(role);
       this.rolesResource().create(roleRepresent);
-    }catch (Exception e){
-      throw new ApiExceptionStatusException("Identify service error",400);
+    } catch (Exception e) {
+      throw new ApiExceptionStatusException("Identify service error", 400);
     }
   }
 
