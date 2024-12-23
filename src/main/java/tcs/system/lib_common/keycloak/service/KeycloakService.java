@@ -76,9 +76,6 @@ public class KeycloakService {
     Response response;
     var account = getUserRepresentation(dtoCreateAccount);
     response = this.resource.users().create(account);
-    if (response.getStatus() > 299) {
-      throw new ApiExceptionStatusException("Keycloak error", 500);
-    }
     var userId = CreatedResponseUtil.getCreatedId(response);
     if (!userId.isEmpty()) {
       assignRealmRoleToUser(userId, dtoCreateAccount.getRole());
