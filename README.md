@@ -1,6 +1,6 @@
 - Application config
-@Import({KeycloakConfig.class, KeycloakService.class, ApiExceptionHandler.class})
-@EnableConfigurationProperties({KeycloakProperties.class, FileSystemProperties.class})
++ @Import({KeycloakConfig.class, KeycloakService.class, ApiExceptionHandler.class})
++ @EnableConfigurationProperties({KeycloakProperties.class, FileSystemProperties.class})
 
 - application.yml
 
