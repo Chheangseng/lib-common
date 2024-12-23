@@ -15,7 +15,7 @@ public class ApiExceptionHandler {
   @ExceptionHandler(value = {ApiExceptionStatusException.class})
   public ResponseEntity<Object> handleTechnicalException(ApiExceptionStatusException e) {
     HttpStatus httpStatus = HttpStatus.valueOf(e.getStatusCode());
-    var apiException = new ApiException(e.getMessage(),e.getStatusCode(),httpStatus,e.getCause(), ZonedDateTime.now(ZoneId.of("Z")));
+    var apiException = new ApiException(e.getMessage(),e.getStatusCode(),httpStatus,e.getError(), ZonedDateTime.now(ZoneId.of("Z")));
     return new ResponseEntity<>(apiException, httpStatus);
   }
 }

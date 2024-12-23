@@ -1,15 +1,8 @@
 package tcs.system.lib_common.keycloak.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.ws.rs.NotFoundException;
 
-import java.io.ByteArrayInputStream;
-import java.util.*;
-
-import jakarta.ws.rs.client.ClientResponseContext;
 import jakarta.ws.rs.core.Response;
-import org.jboss.resteasy.client.jaxrs.internal.FinalizedClientResponse;
+import java.util.*;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -30,7 +23,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import tcs.system.lib_common.dto.DtoCreateAccount;
-import tcs.system.lib_common.dto.DtoUserLogin;
 import tcs.system.lib_common.exception.ApiExceptionStatusException;
 import tcs.system.lib_common.keycloak.KeycloakProperties;
 
@@ -77,7 +69,7 @@ public class KeycloakService {
         .getBody();
   }
 
-  public void createUser(DtoCreateAccount dtoCreateAccount) {
+  public String createUser(DtoCreateAccount dtoCreateAccount) {
     if (Objects.isNull(dtoCreateAccount)) {
       throw new ApiExceptionStatusException("unable to create user", 400);
     }
@@ -91,11 +83,13 @@ public class KeycloakService {
     if (!userId.isEmpty()) {
       assignRealmRoleToUser(userId, dtoCreateAccount.getRole());
     }
+    return userId;
   }
   public void updateUser (String keyCloakUserId,DtoCreateAccount dtoCreateAccount){
-    if (Objects.isNull(keyCloakUserId) || !keyCloakUserId.isEmpty()){
+    if (Objects.isNull(keyCloakUserId) || keyCloakUserId.isEmpty()){
       throw new ApiExceptionStatusException("User Id is required",400);
     }
+    dtoCreateAccount.setId(keyCloakUserId);
     this.userResource(keyCloakUserId).update(getUserRepresentation(dtoCreateAccount));
     if (Objects.nonNull(dtoCreateAccount.getRole()) && !dtoCreateAccount.getRole().isEmpty()) {
       assignRealmRoleToUser(keyCloakUserId, dtoCreateAccount.getRole());
@@ -192,24 +186,16 @@ public class KeycloakService {
     account.setLastName(dtoCreateAccount.getLastName());
     account.setEnabled(true);
     account.setEmailVerified(false);
-    account.setUsername(dtoCreateAccount.getEmail());
+    account.setUsername(dtoCreateAccount.getUsername());
+    if (Objects.nonNull(dtoCreateAccount.getId())){
+      account.setId(dtoCreateAccount.getId());
+    }
     if (Objects.nonNull(dtoCreateAccount.getAttributes())
         && !dtoCreateAccount.getAttributes().isEmpty()) {
       account.setAttributes(dtoCreateAccount.getAttributes());
     }
-    if (Objects.nonNull(dtoCreateAccount.getRole()) && !dtoCreateAccount.getRole().isEmpty()) {
-      dtoCreateAccount.getRole().forEach(this::createRoleIfNotExist);
-    }
     account.setCreatedTimestamp(new Date().getTime());
     return account;
-  }
-
-  private void createRoleIfNotExist(String role) {
-    try {
-      this.rolesResource().get(role).toRepresentation();
-    } catch (Exception exception) {
-      this.createRole(role);
-    }
   }
 
   private void createRole(String role) {

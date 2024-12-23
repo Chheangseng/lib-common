@@ -24,6 +24,7 @@ public class ExceptionFilter implements ClientResponseFilter {
       System.out.println(jsonNode);
       System.out.println("--------------------------------------------------------------");
       responseContext.setEntityStream(new ByteArrayInputStream(bytes));
+      throw new ApiExceptionStatusException("Error",status.value(),jsonNode.get("errorMessage"));
     }
   }
 }

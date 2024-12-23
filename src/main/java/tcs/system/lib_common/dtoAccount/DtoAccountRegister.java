@@ -1,14 +1,14 @@
-package tcs.system.lib_common.dto;
+package tcs.system.lib_common.dtoAccount;
 
+import jakarta.validation.Validation;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.*;
 import lombok.Data;
 
-import java.util.*;
-
 @Data
-public class DtoCreateAccount {
+public class DtoAccountRegister {
     private String id;
     @NotNull(message = "username is required")
     @NotBlank(message = "username is required")
