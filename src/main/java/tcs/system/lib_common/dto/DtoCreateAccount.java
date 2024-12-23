@@ -44,4 +44,12 @@ public class DtoCreateAccount {
         // Add the value to the list
         values.add(value);
     }
+    public void removeAttributes (String key){
+        this.getAttributes().remove(key);
+    }
+    public void updateAttributes (String key, String value){
+        if (this.getAttributes().containsKey(key)){
+            this.getAttributes().put(key,Collections.singletonList(value));
+        }
+    }
 }
