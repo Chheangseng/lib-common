@@ -1,5 +1,5 @@
 - Application class config
-  + @Import({KeycloakConfig.class, KeycloakService.class, ApiExceptionHandler.class})
+  + @Import({KeycloakConfig.class, KeycloakService.class, ApiExceptionHandler.class, ExceptionFilter.class})
   + @EnableConfigurationProperties({KeycloakProperties.class, FileSystemProperties.class})
 - keycloak service try catch
   +   try{
