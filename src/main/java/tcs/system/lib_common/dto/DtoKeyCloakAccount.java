@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.*;
 
 @Data
-public class DtoCreateAccount {
+public class DtoKeyCloakAccount {
     private String id;
     @NotNull(message = "username is required")
     @NotBlank(message = "username is required")

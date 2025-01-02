@@ -22,7 +22,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import tcs.system.lib_common.dto.DtoCreateAccount;
+import tcs.system.lib_common.dto.DtoKeyCloakAccount;
 import tcs.system.lib_common.exception.ApiExceptionStatusException;
 import tcs.system.lib_common.keycloak.KeycloakProperties;
 
@@ -69,7 +69,7 @@ public class KeycloakService {
         .getBody();
   }
 
-  public String createUser(DtoCreateAccount dtoCreateAccount) {
+  public String createUser(DtoKeyCloakAccount dtoCreateAccount) {
     if (Objects.isNull(dtoCreateAccount)) {
       throw new ApiExceptionStatusException("unable to create user", 400);
     }
@@ -82,7 +82,7 @@ public class KeycloakService {
     }
     return userId;
   }
-  public void updateUser (String keyCloakUserId,DtoCreateAccount dtoCreateAccount){
+  public void updateUser (String keyCloakUserId, DtoKeyCloakAccount dtoCreateAccount){
     if (Objects.isNull(keyCloakUserId) || keyCloakUserId.isEmpty()){
       throw new ApiExceptionStatusException("User Id is required",400);
     }
@@ -171,7 +171,7 @@ public class KeycloakService {
                 .toList());
   }
 
-  private UserRepresentation getUserRepresentation(DtoCreateAccount dtoCreateAccount) {
+  private UserRepresentation getUserRepresentation(DtoKeyCloakAccount dtoCreateAccount) {
     var account = new UserRepresentation();
     var credential = new CredentialRepresentation();
     credential.setTemporary(false);

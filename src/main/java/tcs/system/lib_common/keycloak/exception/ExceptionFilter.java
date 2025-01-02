@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.client.ClientRequestContext;
 import jakarta.ws.rs.client.ClientResponseContext;
 import jakarta.ws.rs.client.ClientResponseFilter;
+import jakarta.ws.rs.ext.Provider;
 import org.springframework.http.HttpStatus;
 import tcs.system.lib_common.exception.ApiExceptionStatusException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
+@Provider
 public class ExceptionFilter implements ClientResponseFilter {
   @Override
   public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext)
