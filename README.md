@@ -1,6 +1,13 @@
 - Application class config
   + @Import({KeycloakConfig.class, KeycloakService.class, ApiExceptionHandler.class})
   + @EnableConfigurationProperties({KeycloakProperties.class, FileSystemProperties.class})
+- keycloak service try catch
+  +   try{
+      var id = keycloakService.createUser(userAccount);
+      entity.setExternalId(id);
+    }catch (ResponseProcessingException e) {
+      /// your exception
+    }
 
 - application.yml
 
