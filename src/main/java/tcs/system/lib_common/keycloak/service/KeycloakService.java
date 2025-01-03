@@ -182,8 +182,9 @@ public class KeycloakService {
     account.setFirstName(dtoCreateAccount.getFirstname());
     account.setLastName(dtoCreateAccount.getLastName());
     account.setEnabled(true);
-    account.setEmailVerified(false);
+    account.setEmailVerified(true);
     account.setUsername(dtoCreateAccount.getUsername());
+    account.setRequiredActions(Collections.emptyList());
     if (Objects.nonNull(dtoCreateAccount.getId())){
       account.setId(dtoCreateAccount.getId());
     }
@@ -204,6 +205,19 @@ public class KeycloakService {
       throw new ApiExceptionStatusException("Identify service error", 400);
     }
   }
+//  public Jwt getDecodeToken() {
+//    Object authentication = SecurityContextHolder.getContext().getAuthentication();
+//    if (Objects.isNull(authentication)) return null;
+//    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    if (Objects.isNull(principal)) {
+//      return null;
+//    }
+//    if (principal instanceof Jwt jwt) {
+//      return jwt;
+//    } else {
+//      throw new ApiExceptionStatusException("Something went wrong invalid jwt token", 500);
+//    }
+//  }
 
   private MultiValueMap<String, String> buildForm() {
     MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
